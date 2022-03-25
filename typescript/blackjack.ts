@@ -55,8 +55,8 @@ export class Deck {
     return deck;
   }
 
-  draw() {
-    return this.cards.shift();
+  draw(): Card {
+    return this.cards.shift()!; // Exclamation mark means can't be undefined
   }
 
   shuffle(): Array<Card> {
@@ -123,3 +123,65 @@ export class Hand {
     }
   }
 }
+
+export class Game {
+  deck: Deck;
+
+  constructor() {
+    this.deck = new Deck();
+  }
+
+  play() {
+    console.log('Welcome to a game of Blackjack.');
+    this.deck.shuffle();
+    const playerHand = this.playerTurn(
+      new Hand([this.deck.draw(), this.deck.draw()])
+    );
+    const dealerHand = this.dealerTurn(
+      new Hand([this.deck.draw(), this.deck.draw()])
+    );
+    // Get winner
+    this.getWinner(playerHand, dealerHand);
+  }
+
+  playerTurn(hand: Hand): Hand {
+    console.log(`Your hand is ${hand.toString()}`);
+    let playerTurn = true;
+    while (playerTurn) {
+      let hitOrStick = window.prompt("Enter 'hit' or 'stick': ");
+      if (hitOrStick === 'hit') {
+        hand.hit(this.deck.draw());
+        console.log(`Your hand is ${hand.toString()}`);
+        playerTurn = hand.checkBust();
+      } else {
+        playerTurn = false;
+      }
+    }
+    return hand;
+  }
+
+  dealerTurn(hand: Hand): Hand {
+    console.log(`Dealers hand is ${hand.toString()}`);
+    while (hand.points <= 17) {
+      hand.hit(this.deck.draw());
+      console.log(`Dealers hand is ${hand.toString()}`);
+      hand.checkBust();
+    }
+    return hand;
+  }
+
+  getWinner(player: Hand, dealer: Hand) {
+    const pPoints = player.points;
+    const dPoints = dealer.points;
+    if ((player.bust && dealer.bust) || pPoints === dPoints) {
+      console.log('Draw!');
+    } else if (dealer.bust || pPoints > dPoints) {
+      console.log('You win!');
+    } else if (player.bust || pPoints < dPoints) {
+      console.log('Dealer wins.');
+    }
+  }
+}
+
+let game1 = new Game();
+game1.play();

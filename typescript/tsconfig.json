@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es6", // most modern version of js
-    "module": "commonjs", // commonjs syntax to import & export modules
     "strictNullChecks": true // variables can only have null or undefined values if they are explicitly assigned those values.
   },
   "include": ["**/*.ts"] // compiler should check every single file that has a .ts extension.
